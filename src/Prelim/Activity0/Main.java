@@ -1,4 +1,4 @@
-package Prelim;
+package Prelim.Activity0;
 
 import java.io.IOException;
 import java.util.Scanner;
