@@ -2,16 +2,26 @@ package Prelim;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class YoutubeDataAnalyzer {
-    public static void main(String[] args) {
+public class ChannelTitle {
+    private FileWriter writer;
+    public ChannelTitle() throws IOException {
+        // Initialize FileWriter
+        String outputFilePath = "searchResults.csv";
+        writer = new FileWriter(outputFilePath);
+    }
+    public void searchChannelTitles(String filePath) {
         try {
-            // Load the CSV file
-            String filePath = "U.csv"; // Replace with actual file path
             File file = new File(filePath);
             Scanner scanner = new Scanner(file);
+
+            // Initialize FileWriter
+            String outputFilePath = "searchResults.csv";
+            FileWriter writer = new FileWriter(outputFilePath);
 
             // Skip the header line
             if (scanner.hasNextLine()) {
@@ -44,10 +54,20 @@ public class YoutubeDataAnalyzer {
                 String searchQuery = kbd.nextLine().toLowerCase(); // Convert search query to lowercase
 
                 // Search and display the result
+                String resultString;
                 if (channelVideoCount.containsKey(searchQuery)) {
-                    System.out.println("Number of videos by '" + searchQuery + "': " + channelVideoCount.get(searchQuery));
+                    resultString = "Number of videos by '" + searchQuery + "': " + channelVideoCount.get(searchQuery);
+                    System.out.println(resultString);
                 } else {
-                    System.out.println("No videos found for channel: " + searchQuery);
+                    resultString = "No videos found for channel: " + searchQuery;
+                    System.out.println(resultString);
+                }
+
+                try {
+                    writer.write(searchQuery + "," + resultString + "\n");
+                    writer.flush(); // Flush data to file
+                } catch (IOException e) {
+                    System.out.println("An error occurred while writing to the file: " + e.getMessage());
                 }
 
                 // Ask if the user wants to search again
@@ -57,9 +77,17 @@ public class YoutubeDataAnalyzer {
             } while (userChoice.equals("yes"));
 
             kbd.close();
+            writer.close(); // Close FileWriter
 
         } catch (FileNotFoundException e) {
             System.out.println("The CSV file was not found: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to the file: " + e.getMessage());
+        }
+    }
+    public void closeWriter() throws IOException {
+        if (writer != null) {
+            writer.close();
         }
     }
 }
