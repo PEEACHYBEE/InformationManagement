@@ -1,5 +1,4 @@
 package Midterm;
-
 import Midterm.DataObjectClasses.Artist;
 import Midterm.DataObjectClasses.Schedule;
 import java.sql.*;
@@ -76,5 +75,17 @@ public class Admin {
         viewersStatement.setString(1, chosenDate);
         return viewersStatement.executeQuery();
     } // end of fetchViewersForDate method
-}
 
+    public static void deleteSchedule(int scheduleID) throws SQLException{
+        try{
+            String deleteQuery = "DELETE FROM schedule WHERE ScheduleID = ?";
+            PreparedStatement deleteStatement = DatabaseConnection.con.prepareStatement(deleteQuery);
+            deleteStatement.setInt(1, scheduleID);
+            deleteStatement.executeUpdate();
+            System.out.println("Schedule ID " + scheduleID + " has been successfully deleted.");
+        } catch (Exception E){
+            E.printStackTrace();
+        }
+
+    }
+}

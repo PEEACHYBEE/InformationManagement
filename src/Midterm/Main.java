@@ -2,6 +2,7 @@ package Midterm;
 
 import Midterm.DataObjectClasses.Artist;
 import Midterm.DataObjectClasses.Schedule;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -82,9 +83,8 @@ public class Main {
     // <editor-fold defaultstate="collapsed" desc="CUSTOMER">//
     public static void viewAndSelectScheduleOfMusicians() {
         TableDisplay.runDisplayArtist();
-        System.out.println();
         System.out.println("=====================================================");
-        System.out.print("Enter Artist ID you want to watch: ");
+        System.out.print("Enter Artist ID to view the schedule: ");
         int artistID = scanner.nextInt();
         scanner.nextLine();
 
@@ -165,7 +165,6 @@ public class Main {
             System.out.println();
             Customer.runDisplayRedeemedTickets(userID);
             try {
-                System.out.println();
                 System.out.println("==================================================================");
                 System.out.println();
                 System.out.print("Enter Ticket Code: ");
@@ -196,14 +195,20 @@ public class Main {
     } // end of enterTicketNoToWatch method
 
     public static void deleteAccount(){
-        System.out.print("Enter your username:");
-        String username = scanner.nextLine();
+        System.out.print("Are you sure you want to delete this account? (yes/no): ");
+        String confirmation = scanner.nextLine().trim().toLowerCase();
 
-        System.out.print("Enter your password:");
-        String password = scanner.nextLine();
+        if (confirmation.equals("yes")) {
+            System.out.print("Enter your username:");
+            String username = scanner.nextLine();
 
-        // Call the deleteAccount method from the Customer class
-        Customer.deleteAccount(username, password);
+            System.out.print("Enter your password:");
+            String password = scanner.nextLine();
+
+            Customer.deleteAccount(username, password);
+        } else {
+            System.out.println("Account deletion canceled.");
+        }
     }
     // </editor-fold>
 
@@ -356,6 +361,23 @@ public class Main {
             e.printStackTrace();
         }
     }
+
+    public static void deleteScheduleMenu() throws SQLException {
+        TableDisplay.runDisplayArtist();
+        System.out.print("Select an Artist ID to view their schedule/s: ");
+        int artistID = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.println("Schedule for Artist ID " + artistID + ":");
+        System.out.printf("%-13s %-19s %-13s %-10s%n", "Schedule ID", "Artist Name", "Date", "Time");
+        System.out.printf("%-13s %-19s %-13s %-10s%n", "============", "===============", "==========", "====");
+
+        Customer.viewAndSelectSchedule(artistID);
+        System.out.print("Select a Schedule ID to delete the Artist's schedule: ");
+        Scanner kbd = new Scanner(System.in);
+        int scheduleID = kbd.nextInt();
+        Admin.deleteSchedule(scheduleID);
+    }
     // </editor-fold>
 
     public static int subMenuAdmin(String uName) throws InputMismatchException {
@@ -364,7 +386,7 @@ public class Main {
         System.out.println("2. Modify the musician's schedule");
         System.out.println("3. View the list of viewers");
         System.out.println("4. Delete a schedule");
-        System.out.println("4. Logout");
+        System.out.println("5. Logout");
         System.out.print("Enter the number of your choice: ");
         int choice = scanner.nextInt();
         scanner.nextLine();
@@ -404,13 +426,14 @@ public class Main {
                     case 1 -> addMusiciansSchedule();
                     case 2 -> modifyMusiciansSchedule();
                     case 3 -> viewListOfViewers();
-                    case 4 -> {
+                    case 4 -> deleteScheduleMenu();
+                    case 5 -> {
                         System.out.println("Thank you for using GIG live stream!\nLogging out...");
                         run();
                     }
                     default -> System.out.println("Invalid Input");
                 }
-            } catch (InputMismatchException exception) {
+            } catch (InputMismatchException | SQLException exception) {
                 scanner.nextLine();
                 System.out.println("Invalid Input");
             }
@@ -461,4 +484,3 @@ public class Main {
         run();
     }
 } // end of Main class
-
